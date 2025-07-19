@@ -1,6 +1,6 @@
 from faker import Faker
-import string
 import random
+import string
 faker = Faker()
 
 class DataGenerator:
@@ -16,12 +16,13 @@ class DataGenerator:
 
     @staticmethod
     def generate_random_password():
-        import string
-        import random
-
-        special_chars = "?@#$%^&*_\\-+()[]{}><\\/|\"'.,:;"
+        letters = random.choice(string.ascii_letters)
+        digits = random.choice(string.digits)
+        special_chars = "?@#$%^&*|:"
         all_chars = string.ascii_letters + string.digits + special_chars
-        password = random.choice(string.ascii_letters) + random.choice(string.digits)
-        remaining = random.choices(all_chars, k=random.randint(6, 18))
-        password += ''.join(remaining)
-        return ''.join(random.sample(password, len(password)))
+        remaining_length = random.randint(6, 18)
+        remaining_chars = ''.join(random.choices(all_chars, k=remaining_length))
+        password = list(letters + digits + remaining_chars)
+        random.shuffle = password
+
+        return ''.join(password)

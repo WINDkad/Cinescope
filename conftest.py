@@ -2,14 +2,12 @@ import pytest
 import requests
 
 from api.api_manager import ApiManager
-from constants import BASE_URL, REGISTER_ENDPOINT, LOGIN_ENDPOINT
-from custom_requester.custom_requester import CustomRequester
+from constants import BASE_URL, REGISTER_ENDPOINT
 from utils.data_generator import DataGenerator
+from custom_requester.custom_requester import CustomRequester
 
-register_url = f"{BASE_URL}{REGISTER_ENDPOINT}"
-login_url = f"{BASE_URL}{LOGIN_ENDPOINT}"
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_user():
     random_email = DataGenerator.generate_random_email()
     random_name = DataGenerator.generate_random_name()
@@ -23,7 +21,7 @@ def test_user():
         "roles": ["USER"]
     }
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def registered_user(requester, test_user):
     response = requester.send_request(
         method="POST",
@@ -36,7 +34,7 @@ def registered_user(requester, test_user):
     registered_user["id"] = response_data["id"]
     return registered_user
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def requester():
     session = requests.Session()
     return CustomRequester(session=session, base_url=BASE_URL)
