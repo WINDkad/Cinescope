@@ -35,6 +35,56 @@ def registered_user(requester, test_user):
     return registered_user
 
 @pytest.fixture(scope="session")
+def admin_super_session():
+    session = requests.Session()
+    requester = CustomRequester(session, base_url=BASE_URL)
+
+    login_data = {
+        "email": "api1@gmail.com",
+        "password": "asdqwe123Q"
+    }
+
+    response = requester.send_request(method="POST", endpoint="/login", data=login_data)
+    token = response.json().get("accessToken")
+    assert token is not None, "Токен не найден в ответе"
+
+    session.headers.update({"Authorization": f"Bearer {token}"})
+    return session
+
+@pytest.fixture()
+def movie_data():
+    return {
+        "name": DataGenerator.generate_random_name(),
+        "imageUrl": "https://example.com/image.png",
+        "price": DataGenerator.generate_random_int(1, 1000),
+        "description": DataGenerator.generate_random_sentence(5),
+        "location": "MSK",
+        "published": DataGenerator.generate_random_boolean(),
+        "genreId": DataGenerator.generate_random_int(1, 2)
+    }
+
+@pytest.fixture()
+def update_data():
+    return {
+        "name": DataGenerator.generate_random_name(),
+        "imageUrl": "https://example.com/image.png",
+        "price": DataGenerator.generate_random_int(1, 1000),
+        "description": DataGenerator.generate_random_sentence(5),
+        "location": "MSK",
+        "published": DataGenerator.generate_random_boolean(),
+        "genreId": DataGenerator.generate_random_int(1, 2)
+    }
+
+@pytest.fixture()
+def created_movie(admin_super_session, movie_data):
+    api_manager = ApiManager(admin_super_session)
+    response = api_manager.movies_api.create_movie(movie_data)
+    assert response.status_code == 201, "Ошибка при создании фильма"
+    movie_id = response.json()
+    assert movie_id.get("id") is not None, "id фильма отсутствует в ответе"
+    return response.json()
+
+@pytest.fixture(scope="session")
 def requester():
     session = requests.Session()
     return CustomRequester(session=session, base_url=BASE_URL)

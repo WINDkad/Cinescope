@@ -15,6 +15,18 @@ class DataGenerator:
         return f"{faker.first_name()} {faker.last_name()}"
 
     @staticmethod
+    def generate_random_int(min, max):
+        return faker.random_int(min=min, max=max)
+
+    @staticmethod
+    def generate_random_sentence(count):
+        return faker.sentence(nb_words=count)
+
+    @staticmethod
+    def generate_random_boolean():
+        return faker.boolean()
+
+    @staticmethod
     def generate_random_password():
         letters = random.choice(string.ascii_letters)
         digits = random.choice(string.digits)
