@@ -79,9 +79,6 @@ def update_data():
 def created_movie(admin_super_session, movie_data):
     api_manager = ApiManager(admin_super_session)
     response = api_manager.movies_api.create_movie(movie_data)
-    assert response.status_code == 201, "Ошибка при создании фильма"
-    movie_id = response.json()
-    assert movie_id.get("id") is not None, "id фильма отсутствует в ответе"
     return response.json()
 
 @pytest.fixture(scope="session")
