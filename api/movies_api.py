@@ -18,7 +18,7 @@ class MoviesAPI(CustomRequester):
         return self.send_request(
             method="GET",
             endpoint=MOVIE_ENDPOINT,
-            data=filters,
+            params=filters,
             expected_status=expected_status
         )
 
