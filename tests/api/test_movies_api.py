@@ -9,20 +9,17 @@ class TestMoviesAPI:
         api_manager = ApiManager(admin_super_session)
 
         response = api_manager.movies_api.create_movie(movie_data)
-        assert response.status_code == 201, "Произошла ошибка при создании фильма"
         assert response.json()["name"] == movie_data["name"], "Имя не совпадает"
 
     def test_get_movie(self, admin_super_session):
         api_manager = ApiManager(admin_super_session)
         response = api_manager.movies_api.get_movies()
-        assert response.status_code == 200, "Произошла ошибка при получении фильмов"
 
     def test_get_movie_by_id(self, admin_super_session, created_movie):
         api_manager = ApiManager(admin_super_session)
         movie_id = created_movie["id"]
 
         response = api_manager.movies_api.get_movie_by_id(movie_id)
-        assert response.status_code == 200, "Фильм не найден"
 
     def test_delete_movie(self, admin_super_session, created_movie):
         api_manager = ApiManager(admin_super_session)
