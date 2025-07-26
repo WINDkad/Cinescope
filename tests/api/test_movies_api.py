@@ -14,12 +14,14 @@ class TestMoviesAPI:
     def test_get_movie(self, admin_super_session):
         api_manager = ApiManager(admin_super_session)
         response = api_manager.movies_api.get_movies()
+        assert response.status_code == 200, "Фильм не найден"
 
     def test_get_movie_by_id(self, admin_super_session, created_movie):
         api_manager = ApiManager(admin_super_session)
         movie_id = created_movie["id"]
 
         response = api_manager.movies_api.get_movie_by_id(movie_id)
+        assert response.status_code == 200, "Фильм не найден"
 
     def test_delete_movie(self, admin_super_session, created_movie):
         api_manager = ApiManager(admin_super_session)
@@ -27,6 +29,9 @@ class TestMoviesAPI:
 
         response = api_manager.movies_api.delete_movie(movie_id)
         assert response.status_code == 200, "Фильм не удалился"
+
+        response = api_manager.movies_api.get_movie_by_id(movie_id, expected_status=404)
+        assert response.status_code == 404, "Фильм найден"
 
     def test_update_movie(self, admin_super_session, update_data, created_movie):
         api_manager = ApiManager(admin_super_session)
