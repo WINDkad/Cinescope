@@ -1,20 +1,22 @@
-from constants import BASE_URL
+from constants.constants import BASE_URL, USER_ENDPOINT
 from custom_requester.custom_requester import CustomRequester
 
 class UserAPI(CustomRequester):
     def __init__(self, session):
-        super().__init__(session=session, base_url=BASE_URL)
+        self.session = session
+        super().__init__(session, BASE_URL)
 
-    def get_user_info(self, user_id, expected_status=200):
+    def get_user(self, user_locator, expected_status=200):
         return self.send_request(
             method="GET",
-            endpoint=f"/users/{user_id}",
+            endpoint=f"{USER_ENDPOINT}/{user_locator}",
             expected_status=expected_status
         )
 
-    def delete_user(self, user_id, expected_status=204):
+    def create_user(self, user_data, expected_status=201):
         return self.send_request(
-            method="DELETE",
-            endpoint=f"/users/{user_id}",
+            method="POST",
+            endpoint=f"{USER_ENDPOINT}",
+            data=user_data,
             expected_status=expected_status
         )
