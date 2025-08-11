@@ -30,14 +30,11 @@ def registered_user(requester, test_user: TestUser) -> TestUser:
     response = requester.send_request(
         method="POST",
         endpoint=REGISTER_ENDPOINT,
-        data=test_user.model_dump(),
+        data=test_user.model_dump(mode="json", exclude_unset=True),
         expected_status=201
     )
 
-    response_data = response.json()
-    return test_user.model_copy(update={
-        "id": response_data["id"]
-    })
+    return test_user.model_copy(update={"id": response.json()["id"]})
 
 @pytest.fixture(scope="session")
 def admin_super_session():

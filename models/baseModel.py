@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, EmailStr, model_validator, field_serializ
 from constants.roles import Roles
 
 class TestUser(BaseModel):
+    __test__ = False
     email: EmailStr
     fullName: str
     password: str = Field(..., min_length=8, max_length=20)
