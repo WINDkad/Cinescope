@@ -14,3 +14,7 @@ LOGIN_ENDPOINT = "/login"
 REGISTER_ENDPOINT = "/register"
 MOVIE_ENDPOINT = "/movies"
 USER_ENDPOINT = "/user"
+
+GREEN = '\033[32m'
+RED = '\033[31m'
+RESET = '\033[0m'
