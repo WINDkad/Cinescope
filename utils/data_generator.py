@@ -35,6 +35,6 @@ class DataGenerator:
         remaining_length = random.randint(6, 18)
         remaining_chars = ''.join(random.choices(all_chars, k=remaining_length))
         password = list(letters + digits + remaining_chars)
-        random.shuffle = password
+        random.shuffle(password)
 
         return ''.join(password)

@@ -4,38 +4,39 @@ import requests
 from api.api_manager import ApiManager
 from constants.constants import BASE_URL, REGISTER_ENDPOINT
 from resources.user_creds import SuperAdminCreds
+from tests.api.test_user import TestUser
 from utils.data_generator import DataGenerator
 from custom_requester.custom_requester import CustomRequester
 from entities.user import User
 from constants.roles import Roles
+from utils.user_generator import UserGenerator
+from models.baseModel import TestUser
 
 
 @pytest.fixture()
-def test_user():
-    random_email = DataGenerator.generate_random_email()
-    random_name = DataGenerator.generate_random_name()
+def test_user() -> TestUser:
     random_password = DataGenerator.generate_random_password()
 
-    return {
-        "email": random_email,
-        "fullName": random_name,
-        "password": random_password,
-        "passwordRepeat": random_password,
-        "roles": [Roles.USER.value]
-    }
+    return TestUser(
+        email=DataGenerator.generate_random_email(),
+        fullName=DataGenerator.generate_random_name(),
+        password=random_password,
+        passwordRepeat=random_password,
+        roles=[Roles.USER]
+    )
 
 @pytest.fixture()
-def registered_user(requester, test_user):
+def registered_user(requester, test_user: TestUser) -> TestUser:
     response = requester.send_request(
         method="POST",
         endpoint=REGISTER_ENDPOINT,
-        data=test_user,
+        data=test_user.model_dump(),
         expected_status=201
     )
     response_data = response.json()
     registered_user = test_user.copy()
     registered_user["id"] = response_data["id"]
-    return registered_user
+    return test_user.model_copy(update={"id": response_data["id"]})
 
 @pytest.fixture(scope="session")
 def admin_super_session():
@@ -79,9 +80,8 @@ def update_data():
     }
 
 @pytest.fixture()
-def created_movie(admin_super_session, movie_data):
-    api_manager = ApiManager(admin_super_session)
-    response = api_manager.movies_api.create_movie(movie_data)
+def created_movie(super_admin, movie_data):
+    response = super_admin.api.movies_api.create_movie(movie_data)
     return response.json()
 
 @pytest.fixture(scope="session")
@@ -118,7 +118,7 @@ def user_session():
 def super_admin(user_session):
     new_session = user_session()
 
-    super_admin = User (
+    super_admin = User(
         SuperAdminCreds.USERNAME,
         SuperAdminCreds.PASSWORD,
         [Roles.SUPER_ADMIN.value],
@@ -129,24 +129,16 @@ def super_admin(user_session):
     return super_admin
 
 @pytest.fixture()
-def creation_user_data(test_user):
-    updated_data = test_user.copy()
-    updated_data.update({
+def creation_user_data(test_user: TestUser) -> TestUser:
+    return test_user.model_copy(update={
         "verified": True,
-        "banned": False
+        "banned": False,
     })
-    return updated_data
 
-@pytest.fixture
-def common_user(user_session, super_admin, creation_user_data):
-    new_session = user_session()
+@pytest.fixture()
+def common_user(user_session, super_admin):
+    return UserGenerator.create_user_with_role(user_session, super_admin, Roles.USER)
 
-    common_user = User(
-        creation_user_data['email'],
-        creation_user_data['password'],
-        [Roles.USER.value],
-        new_session)
-
-    super_admin.api.user_api.create_user(creation_user_data)
-    common_user.api.auth_api.authenticate(common_user.creds)
-    return common_user
+@pytest.fixture()
+def admin(user_session, super_admin):
+    return UserGenerator.create_user_with_role(user_session, super_admin, Roles.ADMIN)

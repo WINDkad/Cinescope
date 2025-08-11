@@ -14,11 +14,11 @@ class MoviesAPI(CustomRequester):
             expected_status=expected_status
         )
 
-    def get_movies(self, filters=None, expected_status=200):
+    def get_movies(self, params=None, expected_status=200):
         return self.send_request(
             method="GET",
             endpoint=MOVIE_ENDPOINT,
-            params=filters,
+            params=params,
             expected_status=expected_status
         )
 

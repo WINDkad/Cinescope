@@ -1,6 +1,8 @@
 import json
 import logging
 import os
+import sys
+
 
 class CustomRequester:
     base_headers = {
@@ -14,6 +16,13 @@ class CustomRequester:
         self.headers = self.base_headers.copy()
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(message)s')
+        handler.setFormatter(formatter)
+        if not self.logger.handlers:
+            self.logger.addHandler(handler)
 
     def send_request(self, method, endpoint, data=None, expected_status=200, need_logging=True, params=None):
         url = f"{self.base_url}{endpoint}"
