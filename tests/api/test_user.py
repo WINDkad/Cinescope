@@ -1,6 +1,6 @@
 import pytest
 
-from models.baseModel import RegisterUserResponse
+from models.base_model import RegisterUserResponse
 
 class TestUser:
 

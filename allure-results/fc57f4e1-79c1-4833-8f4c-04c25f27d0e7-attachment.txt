@@ -1,0 +1,10 @@
+[32mpytest tests/ui/test_registration_page.py::TestLoginPage::test_login_by_ui (setup)[0m
+curl -X POST 'https://auth.dev-cinescope.coconutqa.ru//register' \
+-H 'User-Agent: python-requests/2.32.3' \
+-H 'Accept-Encoding: gzip, deflate' \
+-H 'Accept: */*' \
+-H 'Connection: keep-alive' \
+-H 'Content-Length: 148' \
+-H 'Content-Type: application/json' \
+-d '{"email": "kekn4fyypvd@gmail.com", "fullName": "Joe Simmons", "password": "CA*ib$Aeww1TIja", "passwordRepeat": "CA*ib$Aeww1TIja", "roles": ["USER"]}' 
+

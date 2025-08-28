@@ -1,8 +1,14 @@
+import datetime
+import uuid
+
 import pytest
 import requests
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from api.api_manager import ApiManager
 from constants.constants import BASE_URL, REGISTER_ENDPOINT
+from db_requester.models import UserDBModel
 from resources.user_creds import SuperAdminCreds
 from tests.api.test_user import TestUser
 from utils.data_generator import DataGenerator
@@ -10,7 +16,7 @@ from custom_requester.custom_requester import CustomRequester
 from entities.user import User
 from constants.roles import Roles
 from utils.user_generator import UserGenerator
-from models.baseModel import TestUser
+from models.base_model import TestUser
 
 
 @pytest.fixture()
@@ -127,6 +133,15 @@ def super_admin(user_session):
     return super_admin
 
 @pytest.fixture()
+def super_admin_token(api_manager):
+    token = api_manager.auth_api.authenticate(
+        (SuperAdminCreds.USERNAME, SuperAdminCreds.PASSWORD)
+    )
+    assert token is not None
+    return token
+
+
+@pytest.fixture()
 def creation_user_data(test_user: TestUser) -> TestUser:
     return test_user.model_copy(update={
         "verified": True,
@@ -140,3 +155,36 @@ def common_user(user_session, super_admin):
 @pytest.fixture()
 def admin(user_session, super_admin):
     return UserGenerator.create_user_with_role(user_session, super_admin, Roles.ADMIN)
+
+HOST = "80.90.191.123"
+PORT = 31200
+DATABASE_NAME = "db_movies"
+USERNAME = "postgres"
+PASSWORD = "AmwFrtnR2"
+
+engine = create_engine(f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE_NAME}")
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+@pytest.fixture(scope="module")
+def db_session():
+    session = SessionLocal()
+
+    test_user = UserDBModel(
+        id=str(uuid.uuid4()),
+        email=DataGenerator.generate_random_email(),
+        full_name=DataGenerator.generate_random_name(),
+        password=DataGenerator.generate_random_password(),
+        created_at=datetime.datetime.now(),
+        updated_at=datetime.datetime.now(),
+        verified=False,
+        banned=False,
+        roles="{USER}"
+    )
+    session.add(test_user)
+    session.commit()
+
+    yield session
+
+    session.delete(test_user)
+    session.commit()
+    session.close()

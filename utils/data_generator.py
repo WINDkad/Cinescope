@@ -23,6 +23,10 @@ class DataGenerator:
         return faker.sentence(nb_words=count)
 
     @staticmethod
+    def generate_random_str(count):
+        return ''.join(faker.random_letters(count))
+
+    @staticmethod
     def generate_random_boolean():
         return faker.boolean()
 
