@@ -64,7 +64,7 @@ class TestAuthAPI:
         with allure.step("Проверяем, что ответ соответствует ожидаемому"):
             with allure.step("Проверка поля персональных данных"):  # обратите внимание на вложенность allure.step
                 with check:
-                    # Строка ниже выдаст исклющение и но выполнение теста продолжится
+                    # Строка ниже выдаст исключение и но выполнение теста продолжится
                     check.equal(register_user_response.fullName, "INCORRECT_NAME", "НЕСОВПАДЕНИЕ fullName")
                     check.equal(register_user_response.email, mock_response.email)
 

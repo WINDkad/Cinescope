@@ -1,3 +1,5 @@
+sqlalchemy
+pytest-check
 allure-python-commons
 playwright
 pytest~=8.4.0

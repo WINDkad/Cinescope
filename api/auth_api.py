@@ -13,7 +13,7 @@ class AuthAPI(CustomRequester):
             expected_status=expected_status
         )
 
-    def login_user(self, login_data, expected_status=200):
+    def login_user(self, login_data, expected_status=201):
         return self.send_request(
             method="POST",
             endpoint=LOGIN_ENDPOINT,
